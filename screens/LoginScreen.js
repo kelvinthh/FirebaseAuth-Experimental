@@ -5,6 +5,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  Image,
   TextInput,
   View,
 } from 'react-native'
@@ -14,21 +15,19 @@ import { auth } from '../firebase'
 import { useNavigation } from '@react-navigation/native'
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const navigation = useNavigation()
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-       if(user)
-       {
-           navigation.replace('Home');
-       } 
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        navigation.replace('Home')
+      }
     })
-  
-    return unsubscribe;
+
+    return unsubscribe
   }, [])
-  
 
   const resetInput = () => {
     //setEmail('')
@@ -38,7 +37,7 @@ const LoginScreen = () => {
   const handleSignUp = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
-      .then(userCredentials => {
+      .then((userCredentials) => {
         const user = userCredentials.user
         console.log(user.email)
         Alert.alert('Registration Success!', 'You have registered as ' + email)
@@ -50,11 +49,10 @@ const LoginScreen = () => {
       })
   }
 
-  const handleLogin = () =>
-  {
-      auth
-      .signInWithEmailAndPassword(email,password)
-      .then(userCredentials => {
+  const handleLogin = () => {
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredentials) => {
         const user = userCredentials.user
         console.log(user.email)
         Alert.alert('Login Success!', 'You have logged in as ' + email)
@@ -77,7 +75,15 @@ const LoginScreen = () => {
       <KeyboardAvoidingView
         behavior='padding'
         style={[styles.box2, styles.shadowProp]}>
-        <Text style={[styles.shadowProp,styles.loginText]}>Please login first :)</Text>
+        <Image
+          style={[styles.tinyLogo, styles.shadowProp]}
+          source={{
+            uri: 'https://picsum.photos/300/200',
+          }}
+        />
+        <Text style={[styles.shadowProp, styles.loginText]}>
+          Please login first :)
+        </Text>
         <TextInput
           placeholder='Email'
           style={[styles.input, styles.shadowProp]}
@@ -163,14 +169,21 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     paddingLeft: 10,
   },
-  loginText:{
-      fontWeight: 'bold',
-      fontSize: 20,
-      color: 'white',
+  loginText: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    color: 'white',
+    
   },
   buttonGroup: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+  },
+  tinyLogo: {
+    width: 300,
+    height: 200,
+    borderRadius: 15,
+    marginVertical: 15,
   },
 })
