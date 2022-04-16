@@ -8,24 +8,39 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { styleProps } from 'react-native-web/dist/cjs/modules/forwardedProps'
 import { auth } from '../firebase'
+import { useNavigation } from '@react-navigation/native'
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+       if(user)
+       {
+           navigation.replace('Home');
+       } 
+    })
+  
+    return () => {
+      unsubscribe;
+    }
+  }, [])
+  
 
   const resetInput = () => {
-    setEmail('')
+    //setEmail('')
     setPassword('')
   }
 
   const handleSignUp = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
+      .then(userCredentials => {
         const user = userCredentials.user
         console.log(user.email)
         Alert.alert('Registration Success!', 'You have registered as ' + email)
@@ -37,10 +52,26 @@ const LoginScreen = () => {
       })
   }
 
+  const handleLogin = () =>
+  {
+      auth
+      .signInWithEmailAndPassword(email,password)
+      .then(userCredentials => {
+        const user = userCredentials.user
+        console.log(user.email)
+        Alert.alert('Login Success!', 'You have logged in as ' + email)
+        resetInput()
+      })
+      .catch((error) => {
+        Alert.alert('Fail to login', error.message)
+        console.log(error, error.message)
+      })
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.box1}>
-        <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Login Screen</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Welcome Back!</Text>
       </View>
 
       <View style={{ flex: 0.2 }} />
@@ -48,7 +79,7 @@ const LoginScreen = () => {
       <KeyboardAvoidingView
         behavior='padding'
         style={[styles.box2, styles.shadowProp]}>
-        <Text>Please login here!</Text>
+        <Text style={[styles.shadowProp,styles.loginText]}>Please login first :)</Text>
         <TextInput
           placeholder='Email'
           style={[styles.input, styles.shadowProp]}
@@ -71,7 +102,7 @@ const LoginScreen = () => {
             title='Login'
             color={'white'}
             style={styles.shadowProp}
-            onPress={() => {}}
+            onPress={handleLogin}
           />
           <Button
             title='Register'
@@ -109,6 +140,7 @@ const styles = StyleSheet.create({
     flex: 9,
     backgroundColor: 'red',
     width: '90%',
+    height: '45%',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -125,13 +157,18 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '80%',
-    height: '6%',
+    height: 40,
     backgroundColor: 'white',
     borderWidth: 0,
     borderRadius: 15,
     marginVertical: 10,
     textAlign: 'left',
     paddingLeft: 10,
+  },
+  loginText:{
+      fontWeight: 'bold',
+      fontSize: 20,
+      color: 'white',
   },
   buttonGroup: {
     width: '100%',
