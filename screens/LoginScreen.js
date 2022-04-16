@@ -26,9 +26,7 @@ const LoginScreen = () => {
        } 
     })
   
-    return () => {
-      unsubscribe;
-    }
+    return unsubscribe;
   }, [])
   
 

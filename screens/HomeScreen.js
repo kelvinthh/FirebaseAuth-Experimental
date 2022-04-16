@@ -1,14 +1,12 @@
 import {
   Alert,
   Button,
-  KeyboardAvoidingView,
-  Pressable,
   StyleSheet,
   Text,
-  TextInput,
+  Image,
   View,
 } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { auth } from '../firebase'
 import { useNavigation } from '@react-navigation/native'
@@ -24,12 +22,14 @@ const HomeScreen = () => {
       },
       {
         text: 'Yes',
-        onPress: () => auth.signOut()
-        .then(()=>navigation.replace('Login'))
-        .catch(error => {
-            Alert.alert('Fail to logout', error.message)
-            console.log(error.message);
-        }),
+        onPress: () =>
+          auth
+            .signOut()
+            .then(() => navigation.replace('Login'))
+            .catch((error) => {
+              Alert.alert('Fail to logout', error.message)
+              console.log(error.message)
+            }),
         style: 'default',
       },
     ])
@@ -46,11 +46,10 @@ const HomeScreen = () => {
 
       <View style={{ flex: 0.2 }} />
 
-      <KeyboardAvoidingView
-        behavior='padding'
-        style={[styles.box2, styles.shadowProp]}>
-        <Text style={[styles.shadowProp, styles.loginText]}>
-          Please login first :)
+      <View behavior='padding' style={[styles.box2, styles.shadowProp]}>
+        <Image style={[styles.donut,styles.shadowProp]} source={require('../assets/donut.png')} />
+        <Text style={[styles.shadowProp, styles.centerText]}>
+          We have no idea who ate the donut :(
         </Text>
         <View style={styles.buttonGroup}>
           <Button
@@ -60,7 +59,7 @@ const HomeScreen = () => {
             onPress={handleLogout}
           />
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   )
 }
@@ -104,24 +103,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
-  input: {
-    width: '80%',
-    height: '6%',
-    backgroundColor: 'white',
-    borderWidth: 0,
-    borderRadius: 15,
-    marginVertical: 10,
-    textAlign: 'left',
-    paddingLeft: 10,
-  },
-  loginText: {
+  centerText: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 17,
     color: 'white',
   },
   buttonGroup: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+  },
+  donut: {
+      width: 200,
+      height: 200
   },
 })
